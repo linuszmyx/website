@@ -1,1 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Countdown</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      touch-action: none;
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .screen {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      inset: 0;
+    }
+
+    .ring-wrap {
+      position: relative;
+      width: min(72vw, 320px);
+      height: min(72vw, 320px);
+    }
+
+    .ring-wrap svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .track {
+      fill: none;
+      stroke: #1e1e1e;
+      stroke-width: 3;
+    }
+
+    .arc {
+      fill: none;
+      stroke: #f0f0f0;
+      stroke-width: 3;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .hours {
+      font-size: clamp(52px, 14vw, 80px);
+      font-weight: 300;
+      letter-spacing: -3px;
+      line-height: 1;
+      color: #f0f0f0;
+    }
+
+    .hours-label {
+      font-size: clamp(9px, 2.5vw, 12px);
+      letter-spacing: 4px;
+      color: #444;
+      text-transform: uppercase;
+    }
+
+    .sub-row {
+      display: flex;
+      gap: clamp(24px, 8vw, 48px);
+      margin-top: clamp(28px, 7vw, 44px);
+    }
+
+    .sub-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sub-num {
+      font-size: clamp(22px, 6vw, 34px);
+      font-weight: 300;
+      letter-spacing: -1px;
+      color: #f0f0f0;
+    }
+
+    .sub-lab {
+      font-size: clamp(8px, 2vw, 10px);
+      letter-spacing: 3px;
+      color: #444;
+      text-transform: uppercase;
+    }
+
+    .end-note {
+      position: fixed;
+      bottom: max(28px, env(safe-area-inset-bottom, 28px));
+      font-size: clamp(10px, 2.5vw, 12px);
+      letter-spacing: 2px;
+      color: #2e2e2e;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <div class="ring-wrap">
+      <svg id="svg" viewBox="0 0 320 320">
+        <circle class="track" cx="160" cy="160" r="148"/>
+        <circle class="arc" id="arc" cx="160" cy="160" r="148"
+          stroke-dasharray="929.9" stroke-dashoffset="0"/>
+      </svg>
+      <div class="center">
+        <div class="hours" id="hrs">72</div>
+        <div class="hours-label">hours left</div>
+      </div>
+    </div>
+
+    <div class="sub-row">
+      <div class="sub-item">
+        <div class="sub-num" id="mins">00</div>
+        <div class="sub-lab">min</div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-num" id="secs">00</div>
+        <div class="sub-lab">sec</div>
+      </div>
+    </div>
+
+    <div class="end-note" id="end-note"></div>
+  </div>
+
+  <script>
+    const start = new Date('2026-03-24T19:00:00');
+    const end   = new Date(start.getTime() + 72 * 60 * 60 * 1000);
+    const total = 72 * 60 * 60;
+    const circ  = 2 * Math.PI * 148;
+
+    document.getElementById('end-note').textContent =
+      'ends fri 27 march · 19:00';
+
+    function tick() {
+      const now = new Date();
+      const rem = Math.max(0, (end - now) / 1000);
+      const elapsed = total - rem;
+      const pct = elapsed / total;
+
+      const h = Math.floor(rem / 3600);
+      const m = Math.floor((rem % 3600) / 60);
+      const s = Math.floor(rem % 60);
+
+      document.getElementById('hrs').textContent  = h;
+      document.getElementById('mins').textContent = String(m).padStart(2, '0');
+      document.getElementById('secs').textContent = String(s).padStart(2, '0');
+      document.getElementById('arc').style.strokeDashoffset = pct * circ;
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
