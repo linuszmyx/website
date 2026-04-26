@@ -3,176 +3,499 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Countdown</title>
+  <title>Linus Herrmann</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
       width: 100%;
-      height: 100%;
-      overflow: hidden;
-      touch-action: none;
-      background: #0a0a0a;
-      color: #f0f0f0;
-      font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      min-height: 100%;
+      background: #ffffff;
+      color: #2b2a26;
+      font-family: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    .screen {
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      position: relative;
+    }
+
+    /* Scenery wrapper — centered, fills viewport */
+    .scene {
       position: fixed;
       inset: 0;
-    }
-
-    .ring-wrap {
-      position: relative;
-      width: min(72vw, 320px);
-      height: min(72vw, 320px);
-    }
-
-    .ring-wrap svg {
       width: 100%;
       height: 100%;
-      transform: rotate(-90deg);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .track {
-      fill: none;
-      stroke: #1e1e1e;
-      stroke-width: 3;
+    .scene svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
-    .arc {
-      fill: none;
-      stroke: #f0f0f0;
-      stroke-width: 3;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Floating card */
+    .card {
+      position: fixed;
+      top: clamp(20px, 4vw, 44px);
+      left: clamp(20px, 4vw, 44px);
+      z-index: 10;
+      background: #fdfbf6;
+      padding: clamp(20px, 2.6vw, 30px) clamp(24px, 3vw, 36px);
+      border-radius: 4px;
+      box-shadow:
+        0 1px 0 rgba(0,0,0,0.04),
+        0 8px 24px -8px rgba(60,50,40,0.18),
+        0 24px 48px -16px rgba(60,50,40,0.22);
+      max-width: min(360px, 86vw);
+      transform: rotate(-1.2deg);
+      border: 1px solid rgba(120,100,80,0.08);
     }
 
-    .center {
+    .card::before {
+      content: "";
       position: absolute;
       inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      pointer-events: none;
+      background:
+        radial-gradient(120% 80% at 0% 0%, rgba(255,250,235,0.6), transparent 60%),
+        radial-gradient(120% 80% at 100% 100%, rgba(230,220,200,0.18), transparent 60%);
+      border-radius: inherit;
     }
 
-    .hours {
-      font-size: clamp(52px, 14vw, 80px);
-      font-weight: 300;
-      letter-spacing: -3px;
+    .card .name {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(28px, 3.2vw, 38px);
       line-height: 1;
-      color: #f0f0f0;
+      color: #2b2a26;
+      margin-bottom: 14px;
+      letter-spacing: 0.5px;
     }
 
-    .hours-label {
-      font-size: clamp(9px, 2.5vw, 12px);
-      letter-spacing: 4px;
-      color: #444;
-      text-transform: uppercase;
+    .card .rule {
+      width: 32px;
+      height: 1px;
+      background: #b9ad97;
+      margin: 0 0 16px;
     }
 
-    .sub-row {
-      display: flex;
-      gap: clamp(24px, 8vw, 48px);
-      margin-top: clamp(28px, 7vw, 44px);
-    }
-
-    .sub-item {
+    .card ul {
+      list-style: none;
       display: flex;
       flex-direction: column;
+      gap: 9px;
+    }
+
+    .card li {
+      font-size: clamp(12px, 1.05vw, 13.5px);
+      color: #4a4640;
+      letter-spacing: 0.2px;
+      display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 10px;
+      font-weight: 400;
     }
 
-    .sub-num {
-      font-size: clamp(22px, 6vw, 34px);
-      font-weight: 300;
-      letter-spacing: -1px;
-      color: #f0f0f0;
-    }
-
-    .sub-lab {
-      font-size: clamp(8px, 2vw, 10px);
-      letter-spacing: 3px;
-      color: #444;
+    .card li .label {
+      width: 56px;
+      color: #9a9082;
       text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 1.6px;
+      flex-shrink: 0;
     }
 
-    .end-note {
-      position: fixed;
-      bottom: max(28px, env(safe-area-inset-bottom, 28px));
-      font-size: clamp(10px, 2.5vw, 12px);
-      letter-spacing: 2px;
-      color: #2e2e2e;
-      text-transform: uppercase;
+    .card a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(120,100,80,0.25);
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .card a:hover {
+      color: #1a1815;
+      border-bottom-color: rgba(60,50,40,0.7);
+    }
+
+    /* Animations */
+    @keyframes drift {
+      0%   { transform: translateX(-10vw); }
+      100% { transform: translateX(110vw); }
+    }
+    @keyframes drift-slow {
+      0%   { transform: translateX(-15vw); }
+      100% { transform: translateX(115vw); }
+    }
+
+    .bird {
+      transform-origin: center;
+    }
+
+    @keyframes flap {
+      0%, 100% { transform: scaleY(1); }
+      50%      { transform: scaleY(0.55); }
+    }
+
+    @keyframes wave {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-80px); }
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-1.5deg); }
+      50%      { transform: rotate(1.5deg); }
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.55; }
+      50%      { opacity: 0.85; }
+    }
+
+    .cloud-1 { animation: drift-slow 80s linear infinite; }
+    .cloud-2 { animation: drift 110s linear infinite; animation-delay: -40s; }
+    .cloud-3 { animation: drift-slow 95s linear infinite; animation-delay: -65s; }
+
+    .bird-flock-1 { animation: drift 38s linear infinite; animation-delay: -5s; }
+    .bird-flock-2 { animation: drift-slow 55s linear infinite; animation-delay: -20s; }
+    .bird-flock-3 { animation: drift 46s linear infinite; animation-delay: -32s; }
+
+    .wing { animation: flap 0.45s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+    .wing.b { animation-duration: 0.5s; }
+    .wing.c { animation-duration: 0.4s; }
+
+    .water-wave { animation: wave 7s linear infinite; }
+    .water-wave.slow { animation-duration: 11s; }
+    .water-shimmer { animation: shimmer 3.5s ease-in-out infinite; }
+
+    .grass-blade { transform-origin: bottom center; transform-box: fill-box; }
+    .grass-blade.a { animation: sway 4.2s ease-in-out infinite; }
+    .grass-blade.b { animation: sway 5.6s ease-in-out infinite; animation-delay: -1s; }
+    .grass-blade.c { animation: sway 3.7s ease-in-out infinite; animation-delay: -2s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="screen">
-    <div class="ring-wrap">
-      <svg id="svg" viewBox="0 0 320 320">
-        <circle class="track" cx="160" cy="160" r="148"/>
-        <circle class="arc" id="arc" cx="160" cy="160" r="148"
-          stroke-dasharray="929.9" stroke-dashoffset="0"/>
-      </svg>
-      <div class="center">
-        <div class="hours" id="hrs">72</div>
-        <div class="hours-label">hours left</div>
-      </div>
-    </div>
 
-    <div class="sub-row">
-      <div class="sub-item">
-        <div class="sub-num" id="mins">00</div>
-        <div class="sub-lab">min</div>
-      </div>
-      <div class="sub-item">
-        <div class="sub-num" id="secs">00</div>
-        <div class="sub-lab">sec</div>
-      </div>
-    </div>
+  <aside class="card" aria-label="Contact card">
+    <div class="name">Linus Herrmann</div>
+    <div class="rule"></div>
+    <ul>
+      <li><span class="label">Email</span><a href="mailto:developer@linusherrmann.ch">developer@linusherrmann.ch</a></li>
+      <li><span class="label">Role</span>Software Engineer</li>
+      <li><span class="label">Place</span>Switzerland</li>
+    </ul>
+  </aside>
 
-    <div class="end-note" id="end-note"></div>
+  <div class="scene" aria-hidden="true">
+    <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <!-- Hand-drawn wobble filter -->
+        <filter id="paint" x="-2%" y="-2%" width="104%" height="104%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="3" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/>
+        </filter>
+
+        <filter id="paint-soft" x="-2%" y="-2%" width="104%" height="104%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="7" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
+        </filter>
+
+        <!-- Watercolor paper grain -->
+        <filter id="grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="2"/>
+          <feColorMatrix values="0 0 0 0 0.55  0 0 0 0 0.5  0 0 0 0 0.42  0 0 0 0.06 0"/>
+          <feComposite in2="SourceGraphic" operator="in"/>
+        </filter>
+
+        <!-- Soft sky tint at horizon, fades to white at top -->
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#ffffff"/>
+          <stop offset="55%" stop-color="#ffffff"/>
+          <stop offset="80%" stop-color="#f3edde"/>
+          <stop offset="100%" stop-color="#ead7b3" stop-opacity="0.55"/>
+        </linearGradient>
+
+        <!-- Far mountain wash -->
+        <linearGradient id="mtnFar" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#b9c4d1"/>
+          <stop offset="100%" stop-color="#9caab9"/>
+        </linearGradient>
+
+        <linearGradient id="mtnMid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7e95a5"/>
+          <stop offset="100%" stop-color="#5c7585"/>
+        </linearGradient>
+
+        <linearGradient id="mtnNear" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5b6e6a"/>
+          <stop offset="100%" stop-color="#3f524d"/>
+        </linearGradient>
+
+        <linearGradient id="snow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fbfaf6"/>
+          <stop offset="100%" stop-color="#e6ddc8"/>
+        </linearGradient>
+
+        <linearGradient id="meadow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#a6c187"/>
+          <stop offset="60%" stop-color="#82a766"/>
+          <stop offset="100%" stop-color="#688f4f"/>
+        </linearGradient>
+
+        <linearGradient id="meadowFront" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7ba35d"/>
+          <stop offset="100%" stop-color="#4f7239"/>
+        </linearGradient>
+
+        <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#bcd6e3"/>
+          <stop offset="100%" stop-color="#7aa0b6"/>
+        </linearGradient>
+
+        <linearGradient id="sun" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff5d8"/>
+          <stop offset="100%" stop-color="#fff5d8" stop-opacity="0"/>
+        </linearGradient>
+
+        <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff1c2" stop-opacity="0.85"/>
+          <stop offset="60%" stop-color="#fff1c2" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="#fff1c2" stop-opacity="0"/>
+        </radialGradient>
+
+        <!-- Bird symbol — simple "M" gull silhouette -->
+        <symbol id="bird" viewBox="-20 -10 40 20" overflow="visible">
+          <g class="bird">
+            <path class="wing a" d="M -16 0 Q -8 -8 0 0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path class="wing a" d="M 0 0 Q 8 -8 16 0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          </g>
+        </symbol>
+
+        <symbol id="bird-b" viewBox="-20 -10 40 20" overflow="visible">
+          <g class="bird">
+            <path class="wing b" d="M -14 0 Q -7 -7 0 0" stroke="#2e2e2e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            <path class="wing b" d="M 0 0 Q 7 -7 14 0" stroke="#2e2e2e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          </g>
+        </symbol>
+
+        <symbol id="bird-c" viewBox="-20 -10 40 20" overflow="visible">
+          <g class="bird">
+            <path class="wing c" d="M -12 0 Q -6 -6 0 0" stroke="#3a3a3a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <path class="wing c" d="M 0 0 Q 6 -6 12 0" stroke="#3a3a3a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          </g>
+        </symbol>
+
+        <!-- Cloud — soft watercolor blob -->
+        <symbol id="cloud" viewBox="0 0 200 70" overflow="visible">
+          <g filter="url(#paint-soft)" opacity="0.85">
+            <ellipse cx="50"  cy="40" rx="40" ry="22" fill="#ffffff"/>
+            <ellipse cx="95"  cy="32" rx="48" ry="26" fill="#ffffff"/>
+            <ellipse cx="140" cy="40" rx="40" ry="22" fill="#ffffff"/>
+            <ellipse cx="170" cy="44" rx="26" ry="16" fill="#ffffff"/>
+          </g>
+          <g opacity="0.25">
+            <ellipse cx="60"  cy="50" rx="30" ry="8" fill="#c9c2b1"/>
+            <ellipse cx="120" cy="52" rx="40" ry="8" fill="#c9c2b1"/>
+          </g>
+        </symbol>
+      </defs>
+
+      <!-- Sky wash -->
+      <rect x="0" y="0" width="1600" height="900" fill="url(#sky)"/>
+
+      <!-- Sun glow -->
+      <circle cx="1100" cy="320" r="220" fill="url(#sunGlow)"/>
+      <circle cx="1100" cy="320" r="58"  fill="#fff4d2" opacity="0.95"/>
+      <circle cx="1100" cy="320" r="44"  fill="#ffe9a8" opacity="0.85"/>
+
+      <!-- Clouds -->
+      <g class="cloud-1" style="opacity:0.9">
+        <use href="#cloud" x="0" y="120" width="260" height="90"/>
+      </g>
+      <g class="cloud-2" style="opacity:0.85">
+        <use href="#cloud" x="0" y="200" width="320" height="110"/>
+      </g>
+      <g class="cloud-3" style="opacity:0.8">
+        <use href="#cloud" x="0" y="80" width="200" height="70"/>
+      </g>
+
+      <!-- Far mountains -->
+      <g filter="url(#paint-soft)">
+        <path fill="url(#mtnFar)" opacity="0.85"
+          d="M -50 560
+             L 120 470 L 220 510 L 340 410 L 460 490 L 560 430
+             L 700 510 L 820 440 L 960 520 L 1100 450 L 1240 530
+             L 1380 460 L 1520 520 L 1650 480 L 1650 900 L -50 900 Z"/>
+      </g>
+
+      <!-- Mid mountains with snow caps -->
+      <g filter="url(#paint)">
+        <!-- main range -->
+        <path fill="url(#mtnMid)"
+          d="M -50 640
+             L 80 540 L 160 590 L 260 470 L 360 560 L 450 500
+             L 560 590 L 680 460 L 800 580 L 920 490 L 1060 600
+             L 1180 510 L 1300 590 L 1430 500 L 1560 600 L 1650 560
+             L 1650 900 L -50 900 Z"/>
+
+        <!-- snow caps -->
+        <path fill="url(#snow)" opacity="0.95"
+          d="M 240 490 L 260 470 L 285 500 L 275 505 L 268 498 L 258 506 Z"/>
+        <path fill="url(#snow)" opacity="0.95"
+          d="M 660 490 L 680 460 L 710 495 L 695 502 L 686 493 L 676 502 Z"/>
+        <path fill="url(#snow)" opacity="0.95"
+          d="M 1040 620 L 1060 600 L 1085 625 L 1072 632 L 1063 622 L 1053 632 Z"/>
+        <path fill="url(#snow)" opacity="0.95"
+          d="M 1410 520 L 1430 500 L 1458 528 L 1444 535 L 1435 524 L 1425 534 Z"/>
+
+        <!-- subtle ridge highlights -->
+        <path stroke="#a8b8c5" stroke-width="1.2" fill="none" opacity="0.45"
+          d="M 80 540 L 160 590 M 360 560 L 450 500 M 560 590 L 680 460 M 920 490 L 1060 600"/>
+      </g>
+
+      <!-- Near hills -->
+      <g filter="url(#paint)">
+        <path fill="url(#mtnNear)"
+          d="M -50 720
+             L 100 660 L 230 700 L 360 640 L 500 700 L 640 650
+             L 800 720 L 960 660 L 1120 720 L 1280 670 L 1430 720 L 1560 680 L 1650 710
+             L 1650 900 L -50 900 Z"/>
+      </g>
+
+      <!-- Meadow (back) -->
+      <g filter="url(#paint-soft)">
+        <path fill="url(#meadow)"
+          d="M -50 740
+             L 60 720 L 220 738 L 380 720 L 540 740 L 720 722
+             L 900 742 L 1080 720 L 1260 740 L 1440 722 L 1600 740 L 1650 730
+             L 1650 900 L -50 900 Z"/>
+      </g>
+
+      <!-- Stream / water -->
+      <g>
+        <!-- water body -->
+        <path fill="url(#water)" filter="url(#paint-soft)"
+          d="M -20 820
+             C 200 800, 400 845, 620 820
+             C 820 798, 1000 850, 1200 825
+             C 1380 805, 1520 845, 1650 822
+             L 1650 880 L -20 880 Z"/>
+
+        <!-- shimmer waves: two layers translating -->
+        <g class="water-wave water-shimmer" style="opacity:0.6">
+          <path stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.7"
+                d="M -100 830 q 20 -4 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+          <path stroke="#ffffff" stroke-width="1" fill="none" opacity="0.55"
+                d="M -100 850 q 20 -3 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+        </g>
+        <g class="water-wave slow" style="opacity:0.45">
+          <path stroke="#ffffff" stroke-width="1.2" fill="none"
+                d="M -100 840 q 20 -5 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+          <path stroke="#ffffff" stroke-width="0.9" fill="none" opacity="0.6"
+                d="M -100 862 q 20 -3 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+        </g>
+
+        <!-- bank reflection -->
+        <path fill="#3f5e3a" opacity="0.4" filter="url(#paint-soft)"
+              d="M -20 818 C 200 798, 400 843, 620 818 C 820 796, 1000 848, 1200 823 C 1380 803, 1520 843, 1650 820 L 1650 826 L -20 826 Z"/>
+      </g>
+
+      <!-- Foreground meadow with grass -->
+      <g filter="url(#paint-soft)">
+        <path fill="url(#meadowFront)"
+          d="M -50 855
+             C 200 845, 420 870, 640 858
+             C 820 850, 1020 875, 1240 860
+             C 1420 850, 1560 872, 1650 862
+             L 1650 900 L -50 900 Z"/>
+      </g>
+
+      <!-- Grass blades -->
+      <g stroke="#3d5a2a" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.85">
+        <path class="grass-blade a" d="M 80 880 q -2 -16 4 -28"/>
+        <path class="grass-blade b" d="M 95 880 q 2 -14 -3 -24"/>
+        <path class="grass-blade c" d="M 110 880 q -1 -18 5 -30"/>
+        <path class="grass-blade a" d="M 240 882 q 2 -14 -4 -26"/>
+        <path class="grass-blade b" d="M 255 882 q -2 -16 3 -28"/>
+        <path class="grass-blade c" d="M 380 880 q -1 -14 5 -24"/>
+        <path class="grass-blade a" d="M 395 880 q 3 -16 -3 -28"/>
+        <path class="grass-blade b" d="M 540 884 q -2 -16 4 -28"/>
+        <path class="grass-blade c" d="M 555 884 q 2 -14 -3 -24"/>
+        <path class="grass-blade a" d="M 720 880 q -1 -16 5 -28"/>
+        <path class="grass-blade b" d="M 735 880 q 2 -14 -3 -24"/>
+        <path class="grass-blade c" d="M 900 884 q -2 -18 4 -30"/>
+        <path class="grass-blade a" d="M 915 884 q 2 -14 -3 -24"/>
+        <path class="grass-blade b" d="M 1080 880 q -1 -16 5 -28"/>
+        <path class="grass-blade c" d="M 1095 880 q 2 -14 -3 -24"/>
+        <path class="grass-blade a" d="M 1260 884 q -2 -18 4 -30"/>
+        <path class="grass-blade b" d="M 1275 884 q 2 -14 -3 -24"/>
+        <path class="grass-blade c" d="M 1440 882 q -1 -16 5 -28"/>
+        <path class="grass-blade a" d="M 1455 882 q 2 -14 -3 -24"/>
+      </g>
+
+      <!-- Tiny wildflowers -->
+      <g opacity="0.9">
+        <circle cx="180" cy="876" r="2.4" fill="#f6c945"/>
+        <circle cx="320" cy="880" r="2.4" fill="#f1f1f1"/>
+        <circle cx="470" cy="878" r="2.4" fill="#e89bc6"/>
+        <circle cx="660" cy="878" r="2.4" fill="#f6c945"/>
+        <circle cx="850" cy="880" r="2.4" fill="#f1f1f1"/>
+        <circle cx="1020" cy="876" r="2.4" fill="#e89bc6"/>
+        <circle cx="1180" cy="880" r="2.4" fill="#f6c945"/>
+        <circle cx="1360" cy="878" r="2.4" fill="#f1f1f1"/>
+        <circle cx="1520" cy="880" r="2.4" fill="#e89bc6"/>
+      </g>
+
+      <!-- A small pine on the right hill -->
+      <g filter="url(#paint-soft)">
+        <rect x="1338" y="700" width="4" height="22" fill="#5a3f24"/>
+        <path d="M 1340 670 l -16 28 l 32 0 z M 1340 685 l -20 32 l 40 0 z" fill="#3f5a32"/>
+      </g>
+      <g filter="url(#paint-soft)">
+        <rect x="232" y="708" width="3" height="18" fill="#5a3f24"/>
+        <path d="M 233 685 l -12 22 l 24 0 z M 233 695 l -16 24 l 32 0 z" fill="#3f5a32"/>
+      </g>
+
+      <!-- Birds — three flocks, looping across sky -->
+      <g class="bird-flock-1">
+        <use href="#bird"   x="0" y="200" width="34" height="17"/>
+        <use href="#bird-b" x="40" y="215" width="26" height="13"/>
+        <use href="#bird-c" x="72" y="208" width="22" height="11"/>
+      </g>
+
+      <g class="bird-flock-2">
+        <use href="#bird"   x="0"  y="320" width="28" height="14"/>
+        <use href="#bird-b" x="32" y="332" width="22" height="11"/>
+      </g>
+
+      <g class="bird-flock-3">
+        <use href="#bird-c" x="0"  y="150" width="20" height="10"/>
+        <use href="#bird"   x="28" y="160" width="26" height="13"/>
+        <use href="#bird-b" x="60" y="152" width="22" height="11"/>
+        <use href="#bird-c" x="88" y="166" width="18" height="9"/>
+      </g>
+
+      <!-- Subtle paper grain over the whole scene -->
+      <rect x="0" y="0" width="1600" height="900" filter="url(#grain)" opacity="0.5"/>
+    </svg>
   </div>
 
-  <script>
-    const start = new Date('2026-03-24T19:00:00');
-    const end   = new Date(start.getTime() + 72 * 60 * 60 * 1000);
-    const total = 72 * 60 * 60;
-    const circ  = 2 * Math.PI * 148;
-
-    document.getElementById('end-note').textContent =
-      'ends fri 27 march · 19:00';
-
-    function tick() {
-      const now = new Date();
-      const rem = Math.max(0, (end - now) / 1000);
-      const elapsed = total - rem;
-      const pct = elapsed / total;
-
-      const h = Math.floor(rem / 3600);
-      const m = Math.floor((rem % 3600) / 60);
-      const s = Math.floor(rem % 60);
-
-      document.getElementById('hrs').textContent  = h;
-      document.getElementById('mins').textContent = String(m).padStart(2, '0');
-      document.getElementById('secs').textContent = String(s).padStart(2, '0');
-      document.getElementById('arc').style.strokeDashoffset = pct * circ;
-    }
-
-    tick();
-    setInterval(tick, 1000);
-  </script>
 </body>
 </html>
