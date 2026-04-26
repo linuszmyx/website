@@ -193,19 +193,20 @@
       50%      { transform: translateX(-7px); }
     }
 
-    .cow-head { transform-box: fill-box; }
-    .cow-a .cow-head { transform-origin: 100% 50%; animation: graze-a 6.5s ease-in-out infinite; }
-    .cow-b .cow-head { transform-origin:   0% 50%; animation: graze-b 7.5s ease-in-out infinite 1.2s; }
+    .cow-head { transform-box: fill-box; transform-origin: 100% 50%; }
+    .cow-a .cow-head { animation: graze-a 6.5s ease-in-out infinite; }
+    .cow-b .cow-head { animation: graze-b 7.5s ease-in-out infinite 1.2s; }
 
+    /* negative rotation = snout pivots down toward grass (CSS positive = visual clockwise) */
     @keyframes graze-a {
-      0%, 8%   { transform: rotate(0deg) translate(0,0); }
-      14%, 70% { transform: rotate(38deg) translate(2px, 6px); }
-      74%, 78% { transform: rotate(34deg) translate(2px, 5px); }
+      0%, 8%    { transform: rotate(0deg) translate(0,0); }
+      14%, 70%  { transform: rotate(-38deg) translate(-2px, 6px); }
+      74%, 78%  { transform: rotate(-34deg) translate(-2px, 5px); }
       82%, 100% { transform: rotate(0deg) translate(0,0); }
     }
     @keyframes graze-b {
-      0%, 32%  { transform: rotate(0deg) translate(0,0); }
-      38%, 92% { transform: rotate(-38deg) translate(-2px, 6px); }
+      0%, 32%   { transform: rotate(0deg) translate(0,0); }
+      38%, 92%  { transform: rotate(-38deg) translate(-2px, 6px); }
       96%, 100% { transform: rotate(0deg) translate(0,0); }
     }
 
@@ -220,6 +221,28 @@
     @keyframes tail-b {
       0%, 100% { transform: rotate(8deg); }
       50%      { transform: rotate(-8deg); }
+    }
+
+    /* Goat */
+    .goat { transform-box: fill-box; transform-origin: center bottom; animation: goat-bob 5.5s ease-in-out infinite; }
+    @keyframes goat-bob {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-1.5px); }
+    }
+
+    .goat-head { transform-box: fill-box; transform-origin: 100% 50%; animation: goat-look 9s ease-in-out infinite 0.6s; }
+    @keyframes goat-look {
+      0%, 25%   { transform: rotate(0deg); }
+      32%, 50%  { transform: rotate(-22deg); }   /* head up, ears alert */
+      57%, 72%  { transform: rotate(0deg); }
+      80%, 92%  { transform: rotate(10deg); }    /* small nibble down */
+      100%      { transform: rotate(0deg); }
+    }
+
+    .goat-tail { transform-box: fill-box; transform-origin: 0% 100%; animation: goat-tail 2.4s ease-in-out infinite; }
+    @keyframes goat-tail {
+      0%, 100% { transform: rotate(-15deg); }
+      50%      { transform: rotate(20deg); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -470,87 +493,147 @@
 
       <!-- ===== Cows ===== -->
 
-      <!-- Cow A — left, larger, faces left, slowly grazes -->
-      <g class="cow cow-a" transform="translate(640 808)">
-        <g filter="url(#paint-soft)">
-          <!-- shadow -->
-          <ellipse cx="0" cy="44" rx="58" ry="6" fill="#2b2a26" opacity="0.18"/>
+      <!-- Cow A — left of center, faces left, slowly grazes -->
+      <!-- Outer <g>: positioning via SVG attribute (immune to CSS transform overrides). -->
+      <!-- Inner <g class="cow cow-a">: animated body shift via CSS. -->
+      <g transform="translate(640 808)">
+        <g class="cow cow-a">
+          <g filter="url(#paint-soft)">
+            <!-- shadow -->
+            <ellipse cx="0" cy="44" rx="58" ry="6" fill="#2b2a26" opacity="0.18"/>
 
-          <!-- legs -->
-          <rect x="-30" y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
-          <rect x="-14" y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
-          <rect x="10"  y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
-          <rect x="26"  y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
+            <!-- legs -->
+            <rect x="-30" y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
+            <rect x="-14" y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
+            <rect x="10"  y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
+            <rect x="26"  y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
 
-          <!-- body -->
-          <ellipse cx="0" cy="0" rx="46" ry="22" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2.2"/>
-          <!-- patches -->
-          <path d="M -20 -14 q 8 -6 16 -2 q 6 6 -2 12 q -10 4 -16 -2 q -4 -4 2 -8 z" fill="#2b2a26"/>
-          <path d="M 14 -2 q 10 -4 18 2 q 4 6 -4 12 q -10 2 -16 -2 q -4 -6 2 -12 z" fill="#2b2a26"/>
-          <path d="M -8 6 q 6 -2 10 0 q 2 4 -2 8 q -8 2 -10 -2 q -2 -3 2 -6 z" fill="#2b2a26"/>
+            <!-- body -->
+            <ellipse cx="0" cy="0" rx="46" ry="22" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2.2"/>
+            <path d="M -20 -14 q 8 -6 16 -2 q 6 6 -2 12 q -10 4 -16 -2 q -4 -4 2 -8 z" fill="#2b2a26"/>
+            <path d="M 14 -2 q 10 -4 18 2 q 4 6 -4 12 q -10 2 -16 -2 q -4 -6 2 -12 z" fill="#2b2a26"/>
+            <path d="M -8 6 q 6 -2 10 0 q 2 4 -2 8 q -8 2 -10 -2 q -2 -3 2 -6 z" fill="#2b2a26"/>
 
-          <!-- udder -->
-          <ellipse cx="6" cy="20" rx="6" ry="4" fill="#f0c2b6"/>
+            <!-- udder -->
+            <ellipse cx="6" cy="20" rx="6" ry="4" fill="#f0c2b6"/>
 
-          <!-- tail -->
-          <g class="cow-tail" transform="translate(46 -8)">
-            <path d="M 0 0 q 10 6 6 22" stroke="#2b2a26" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-            <circle cx="6" cy="22" r="3" fill="#2b2a26"/>
-          </g>
+            <!-- tail: outer wraps positioning, inner is animated -->
+            <g transform="translate(46 -8)">
+              <g class="cow-tail">
+                <path d="M 0 0 q 10 6 6 22" stroke="#2b2a26" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                <circle cx="6" cy="22" r="3" fill="#2b2a26"/>
+              </g>
+            </g>
 
-          <!-- head (pivots from neck on right of head) -->
-          <g class="cow-head" transform="translate(-58 -4)">
-            <!-- ears -->
-            <path d="M 6 -10 q -4 -10 -10 -6"   stroke="#2b2a26" stroke-width="2" fill="#fdfaf2"/>
-            <path d="M -2 -12 q -3 -8 -10 -4"   stroke="#2b2a26" stroke-width="1.8" fill="#fdfaf2"/>
-            <!-- horn nubs -->
-            <path d="M 0 -10 q 1 -5 5 -6" stroke="#caa97a" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <!-- head -->
-            <ellipse cx="0" cy="0" rx="16" ry="13" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2"/>
-            <!-- snout -->
-            <ellipse cx="-10" cy="3" rx="8" ry="6" fill="#f3d2c2" stroke="#2b2a26" stroke-width="1.6"/>
-            <!-- nostrils -->
-            <ellipse cx="-13" cy="2" rx="0.9" ry="1.4" fill="#2b2a26"/>
-            <ellipse cx="-13" cy="6" rx="0.9" ry="1.4" fill="#2b2a26"/>
-            <!-- eye -->
-            <circle cx="-4" cy="-3" r="1.4" fill="#2b2a26"/>
+            <!-- head: outer wraps positioning, inner is animated; pivots from right edge (neck) -->
+            <g transform="translate(-58 -4)">
+              <g class="cow-head">
+                <path d="M 6 -10 q -4 -10 -10 -6"   stroke="#2b2a26" stroke-width="2"   fill="#fdfaf2"/>
+                <path d="M -2 -12 q -3 -8 -10 -4"   stroke="#2b2a26" stroke-width="1.8" fill="#fdfaf2"/>
+                <path d="M 0 -10 q 1 -5 5 -6"       stroke="#caa97a" stroke-width="2"   fill="none" stroke-linecap="round"/>
+                <ellipse cx="0"  cy="0"  rx="16" ry="13" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2"/>
+                <ellipse cx="-10" cy="3" rx="8"  ry="6"  fill="#f3d2c2" stroke="#2b2a26" stroke-width="1.6"/>
+                <ellipse cx="-13" cy="2" rx="0.9" ry="1.4" fill="#2b2a26"/>
+                <ellipse cx="-13" cy="6" rx="0.9" ry="1.4" fill="#2b2a26"/>
+                <circle cx="-4" cy="-3" r="1.4" fill="#2b2a26"/>
+              </g>
+            </g>
           </g>
         </g>
       </g>
 
-      <!-- Cow B — right, slightly smaller (further), faces right -->
-      <g class="cow cow-b" transform="translate(980 838) scale(0.86)">
-        <g filter="url(#paint-soft)">
-          <ellipse cx="0" cy="44" rx="58" ry="6" fill="#2b2a26" opacity="0.18"/>
+      <!-- Cow B — right of center, slightly smaller (further), faces right -->
+      <g transform="translate(980 838) scale(0.86)">
+        <g class="cow cow-b">
+          <g filter="url(#paint-soft)">
+            <ellipse cx="0" cy="44" rx="58" ry="6" fill="#2b2a26" opacity="0.18"/>
 
-          <rect x="-30" y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
-          <rect x="-14" y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
-          <rect x="10"  y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
-          <rect x="26"  y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
+            <rect x="-30" y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
+            <rect x="-14" y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
+            <rect x="10"  y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
+            <rect x="26"  y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
 
-          <ellipse cx="0" cy="0" rx="46" ry="22" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2.2"/>
-          <path d="M -22 0 q 6 -8 16 -4 q 6 6 0 12 q -10 4 -18 -2 q -4 -4 2 -6 z" fill="#2b2a26"/>
-          <path d="M 16 -10 q 8 -4 16 2 q 6 6 -2 12 q -10 4 -16 -2 q -4 -6 2 -12 z" fill="#2b2a26"/>
-          <path d="M -2 8 q 6 -2 10 0 q 2 4 -2 8 q -8 2 -10 -2 q -2 -3 2 -6 z" fill="#2b2a26"/>
+            <ellipse cx="0" cy="0" rx="46" ry="22" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2.2"/>
+            <path d="M -22 0 q 6 -8 16 -4 q 6 6 0 12 q -10 4 -18 -2 q -4 -4 2 -6 z" fill="#2b2a26"/>
+            <path d="M 16 -10 q 8 -4 16 2 q 6 6 -2 12 q -10 4 -16 -2 q -4 -6 2 -12 z" fill="#2b2a26"/>
+            <path d="M -2 8 q 6 -2 10 0 q 2 4 -2 8 q -8 2 -10 -2 q -2 -3 2 -6 z" fill="#2b2a26"/>
 
-          <ellipse cx="-6" cy="20" rx="6" ry="4" fill="#f0c2b6"/>
+            <ellipse cx="-6" cy="20" rx="6" ry="4" fill="#f0c2b6"/>
 
-          <!-- tail on left side -->
-          <g class="cow-tail" transform="translate(-46 -8) scale(-1 1)">
-            <path d="M 0 0 q 10 6 6 22" stroke="#2b2a26" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-            <circle cx="6" cy="22" r="3" fill="#2b2a26"/>
+            <!-- tail on left side; mirror lives on the positioning wrapper, animation on inner -->
+            <g transform="translate(-46 -8) scale(-1 1)">
+              <g class="cow-tail">
+                <path d="M 0 0 q 10 6 6 22" stroke="#2b2a26" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                <circle cx="6" cy="22" r="3" fill="#2b2a26"/>
+              </g>
+            </g>
+
+            <!-- head on right side; parent mirror handles visual flip, child rotation matches cow-a -->
+            <g transform="translate(58 -4) scale(-1 1)">
+              <g class="cow-head">
+                <path d="M 6 -10 q -4 -10 -10 -6"   stroke="#2b2a26" stroke-width="2"   fill="#fdfaf2"/>
+                <path d="M -2 -12 q -3 -8 -10 -4"   stroke="#2b2a26" stroke-width="1.8" fill="#fdfaf2"/>
+                <path d="M 0 -10 q 1 -5 5 -6"       stroke="#caa97a" stroke-width="2"   fill="none" stroke-linecap="round"/>
+                <ellipse cx="0"  cy="0"  rx="16" ry="13" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2"/>
+                <ellipse cx="-10" cy="3" rx="8"  ry="6"  fill="#f3d2c2" stroke="#2b2a26" stroke-width="1.6"/>
+                <ellipse cx="-13" cy="2" rx="0.9" ry="1.4" fill="#2b2a26"/>
+                <ellipse cx="-13" cy="6" rx="0.9" ry="1.4" fill="#2b2a26"/>
+                <circle cx="-4" cy="-3" r="1.4" fill="#2b2a26"/>
+              </g>
+            </g>
           </g>
+        </g>
+      </g>
 
-          <!-- head on right side, mirrored — pivots from neck on left of head -->
-          <g class="cow-head" transform="translate(58 -4) scale(-1 1)">
-            <path d="M 6 -10 q -4 -10 -10 -6"   stroke="#2b2a26" stroke-width="2" fill="#fdfaf2"/>
-            <path d="M -2 -12 q -3 -8 -10 -4"   stroke="#2b2a26" stroke-width="1.8" fill="#fdfaf2"/>
-            <path d="M 0 -10 q 1 -5 5 -6" stroke="#caa97a" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <ellipse cx="0" cy="0" rx="16" ry="13" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2"/>
-            <ellipse cx="-10" cy="3" rx="8" ry="6" fill="#f3d2c2" stroke="#2b2a26" stroke-width="1.6"/>
-            <ellipse cx="-13" cy="2" rx="0.9" ry="1.4" fill="#2b2a26"/>
-            <ellipse cx="-13" cy="6" rx="0.9" ry="1.4" fill="#2b2a26"/>
-            <circle cx="-4" cy="-3" r="1.4" fill="#2b2a26"/>
+      <!-- Goat — left foreground, smaller, looks around -->
+      <g transform="translate(290 866) scale(0.82)">
+        <g class="goat">
+          <g filter="url(#paint-soft)">
+            <!-- shadow -->
+            <ellipse cx="0" cy="34" rx="42" ry="5" fill="#2b2a26" opacity="0.18"/>
+
+            <!-- legs (thinner than cow) -->
+            <rect x="-22" y="14" width="5" height="22" rx="1.5" fill="#3a2e22"/>
+            <rect x="-10" y="16" width="5" height="20" rx="1.5" fill="#3a2e22"/>
+            <rect x="6"   y="16" width="5" height="20" rx="1.5" fill="#3a2e22"/>
+            <rect x="18"  y="14" width="5" height="22" rx="1.5" fill="#3a2e22"/>
+
+            <!-- body (smaller, cream with brown patches) -->
+            <ellipse cx="0" cy="0" rx="34" ry="16" fill="#efe6d3" stroke="#3a2e22" stroke-width="2"/>
+            <path d="M -16 -10 q 14 -4 24 0 q 4 4 -4 8 q -16 4 -22 -2 q -6 -4 2 -6 z" fill="#a07a52"/>
+            <path d="M 10 4 q 6 -2 12 0 q 2 4 -4 6 q -8 0 -10 -2 q -2 -2 2 -4 z" fill="#a07a52"/>
+
+            <!-- short upward tail; positioning wrapper, animated child -->
+            <g transform="translate(34 -6)">
+              <g class="goat-tail">
+                <path d="M 0 0 q 6 -8 8 -1" stroke="#3a2e22" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+              </g>
+            </g>
+
+            <!-- head: positioning wrapper, animated child; pivots from neck (right edge) -->
+            <g transform="translate(-38 -8)">
+              <g class="goat-head">
+                <!-- horns: two curved, swept-back -->
+                <path d="M 4 -10 q 4 -10 10 -8" stroke="#3a2e22" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+                <path d="M 0 -11 q 2 -8 6 -8"   stroke="#3a2e22" stroke-width="2"   fill="none" stroke-linecap="round"/>
+
+                <!-- ear -->
+                <path d="M 6 -6 q 6 -2 8 4 q -4 2 -8 0 z" fill="#efe6d3" stroke="#3a2e22" stroke-width="1.4"/>
+
+                <!-- head (narrower, more elongated than cow) -->
+                <ellipse cx="0" cy="0" rx="13" ry="9" fill="#efe6d3" stroke="#3a2e22" stroke-width="1.8"/>
+
+                <!-- snout -->
+                <ellipse cx="-9" cy="2" rx="6" ry="4" fill="#fdfaf2" stroke="#3a2e22" stroke-width="1.4"/>
+
+                <!-- beard (signature goat) -->
+                <path d="M -10 6 q -1 8 -2 12 q 3 -1 5 -1 q 0 -5 -1 -10 z" fill="#fdfaf2" stroke="#3a2e22" stroke-width="1.2"/>
+
+                <!-- eye + nostril -->
+                <circle cx="-3" cy="-3" r="1.3" fill="#2b2a26"/>
+                <ellipse cx="-12" cy="2" rx="0.7" ry="1.1" fill="#2b2a26"/>
+              </g>
+            </g>
           </g>
         </g>
       </g>
