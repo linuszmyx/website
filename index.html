@@ -138,10 +138,6 @@
       100% { transform: translateX(115vw); }
     }
 
-    .bird {
-      transform-origin: center;
-    }
-
     @keyframes flap {
       0%, 100% { transform: scaleY(1); }
       50%      { transform: scaleY(0.55); }
@@ -183,6 +179,49 @@
     .grass-blade.b { animation: sway 5.6s ease-in-out infinite; animation-delay: -1s; }
     .grass-blade.c { animation: sway 3.7s ease-in-out infinite; animation-delay: -2s; }
 
+    /* Cows */
+    .cow { transform-origin: center bottom; transform-box: fill-box; }
+    .cow-a { animation: cow-shift-a 11s ease-in-out infinite; }
+    .cow-b { animation: cow-shift-b 13s ease-in-out infinite; }
+
+    @keyframes cow-shift-a {
+      0%, 100% { transform: translateX(0); }
+      50%      { transform: translateX(6px); }
+    }
+    @keyframes cow-shift-b {
+      0%, 100% { transform: translateX(0); }
+      50%      { transform: translateX(-7px); }
+    }
+
+    .cow-head { transform-box: fill-box; }
+    .cow-a .cow-head { transform-origin: 100% 50%; animation: graze-a 6.5s ease-in-out infinite; }
+    .cow-b .cow-head { transform-origin:   0% 50%; animation: graze-b 7.5s ease-in-out infinite 1.2s; }
+
+    @keyframes graze-a {
+      0%, 8%   { transform: rotate(0deg) translate(0,0); }
+      14%, 70% { transform: rotate(38deg) translate(2px, 6px); }
+      74%, 78% { transform: rotate(34deg) translate(2px, 5px); }
+      82%, 100% { transform: rotate(0deg) translate(0,0); }
+    }
+    @keyframes graze-b {
+      0%, 32%  { transform: rotate(0deg) translate(0,0); }
+      38%, 92% { transform: rotate(-38deg) translate(-2px, 6px); }
+      96%, 100% { transform: rotate(0deg) translate(0,0); }
+    }
+
+    .cow-tail { transform-box: fill-box; transform-origin: 0% 0%; }
+    .cow-a .cow-tail { animation: tail-a 2.8s ease-in-out infinite; }
+    .cow-b .cow-tail { animation: tail-b 3.4s ease-in-out infinite; }
+
+    @keyframes tail-a {
+      0%, 100% { transform: rotate(-6deg); }
+      50%      { transform: rotate(10deg); }
+    }
+    @keyframes tail-b {
+      0%, 100% { transform: rotate(8deg); }
+      50%      { transform: rotate(-8deg); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.001ms !important;
@@ -198,15 +237,14 @@
     <div class="rule"></div>
     <ul>
       <li><span class="label">Email</span><a href="mailto:developer@linusherrmann.ch">developer@linusherrmann.ch</a></li>
-      <li><span class="label">Role</span>Software Engineer</li>
-      <li><span class="label">Place</span>Switzerland</li>
+      <li><span class="label">Role</span>AI Engineer</li>
+      <li><span class="label">Place</span>Germany</li>
     </ul>
   </aside>
 
   <div class="scene" aria-hidden="true">
     <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
       <defs>
-        <!-- Hand-drawn wobble filter -->
         <filter id="paint" x="-2%" y="-2%" width="104%" height="104%">
           <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="3" result="noise"/>
           <feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/>
@@ -217,22 +255,19 @@
           <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
         </filter>
 
-        <!-- Watercolor paper grain -->
         <filter id="grain">
           <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="2"/>
           <feColorMatrix values="0 0 0 0 0.55  0 0 0 0 0.5  0 0 0 0 0.42  0 0 0 0.06 0"/>
           <feComposite in2="SourceGraphic" operator="in"/>
         </filter>
 
-        <!-- Soft sky tint at horizon, fades to white at top -->
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%"  stop-color="#ffffff"/>
-          <stop offset="55%" stop-color="#ffffff"/>
-          <stop offset="80%" stop-color="#f3edde"/>
+          <stop offset="50%" stop-color="#ffffff"/>
+          <stop offset="78%" stop-color="#f3edde"/>
           <stop offset="100%" stop-color="#ead7b3" stop-opacity="0.55"/>
         </linearGradient>
 
-        <!-- Far mountain wash -->
         <linearGradient id="mtnFar" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#b9c4d1"/>
           <stop offset="100%" stop-color="#9caab9"/>
@@ -260,8 +295,9 @@
         </linearGradient>
 
         <linearGradient id="meadowFront" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#7ba35d"/>
-          <stop offset="100%" stop-color="#4f7239"/>
+          <stop offset="0%" stop-color="#8fb86c"/>
+          <stop offset="55%" stop-color="#6f9750"/>
+          <stop offset="100%" stop-color="#4d6f37"/>
         </linearGradient>
 
         <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
@@ -269,40 +305,33 @@
           <stop offset="100%" stop-color="#7aa0b6"/>
         </linearGradient>
 
-        <linearGradient id="sun" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#fff5d8"/>
-          <stop offset="100%" stop-color="#fff5d8" stop-opacity="0"/>
-        </linearGradient>
-
         <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#fff1c2" stop-opacity="0.85"/>
-          <stop offset="60%" stop-color="#fff1c2" stop-opacity="0.15"/>
+          <stop offset="0%"   stop-color="#fff1c2" stop-opacity="0.85"/>
+          <stop offset="60%"  stop-color="#fff1c2" stop-opacity="0.15"/>
           <stop offset="100%" stop-color="#fff1c2" stop-opacity="0"/>
         </radialGradient>
 
-        <!-- Bird symbol — simple "M" gull silhouette -->
         <symbol id="bird" viewBox="-20 -10 40 20" overflow="visible">
-          <g class="bird">
+          <g>
             <path class="wing a" d="M -16 0 Q -8 -8 0 0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
             <path class="wing a" d="M 0 0 Q 8 -8 16 0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
           </g>
         </symbol>
 
         <symbol id="bird-b" viewBox="-20 -10 40 20" overflow="visible">
-          <g class="bird">
+          <g>
             <path class="wing b" d="M -14 0 Q -7 -7 0 0" stroke="#2e2e2e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
             <path class="wing b" d="M 0 0 Q 7 -7 14 0" stroke="#2e2e2e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
           </g>
         </symbol>
 
         <symbol id="bird-c" viewBox="-20 -10 40 20" overflow="visible">
-          <g class="bird">
+          <g>
             <path class="wing c" d="M -12 0 Q -6 -6 0 0" stroke="#3a3a3a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
             <path class="wing c" d="M 0 0 Q 6 -6 12 0" stroke="#3a3a3a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
           </g>
         </symbol>
 
-        <!-- Cloud — soft watercolor blob -->
         <symbol id="cloud" viewBox="0 0 200 70" overflow="visible">
           <g filter="url(#paint-soft)" opacity="0.85">
             <ellipse cx="50"  cy="40" rx="40" ry="22" fill="#ffffff"/>
@@ -320,179 +349,284 @@
       <!-- Sky wash -->
       <rect x="0" y="0" width="1600" height="900" fill="url(#sky)"/>
 
-      <!-- Sun glow -->
-      <circle cx="1100" cy="320" r="220" fill="url(#sunGlow)"/>
-      <circle cx="1100" cy="320" r="58"  fill="#fff4d2" opacity="0.95"/>
-      <circle cx="1100" cy="320" r="44"  fill="#ffe9a8" opacity="0.85"/>
+      <!-- Sun -->
+      <circle cx="1140" cy="240" r="200" fill="url(#sunGlow)"/>
+      <circle cx="1140" cy="240" r="52"  fill="#fff4d2" opacity="0.95"/>
+      <circle cx="1140" cy="240" r="40"  fill="#ffe9a8" opacity="0.85"/>
 
       <!-- Clouds -->
       <g class="cloud-1" style="opacity:0.9">
-        <use href="#cloud" x="0" y="120" width="260" height="90"/>
+        <use href="#cloud" x="0" y="80"  width="260" height="90"/>
       </g>
       <g class="cloud-2" style="opacity:0.85">
-        <use href="#cloud" x="0" y="200" width="320" height="110"/>
+        <use href="#cloud" x="0" y="150" width="320" height="110"/>
       </g>
       <g class="cloud-3" style="opacity:0.8">
-        <use href="#cloud" x="0" y="80" width="200" height="70"/>
+        <use href="#cloud" x="0" y="60"  width="200" height="70"/>
       </g>
 
       <!-- Far mountains -->
       <g filter="url(#paint-soft)">
         <path fill="url(#mtnFar)" opacity="0.85"
-          d="M -50 560
-             L 120 470 L 220 510 L 340 410 L 460 490 L 560 430
-             L 700 510 L 820 440 L 960 520 L 1100 450 L 1240 530
-             L 1380 460 L 1520 520 L 1650 480 L 1650 900 L -50 900 Z"/>
+          d="M -50 470
+             L 120 380 L 220 420 L 340 320 L 460 400 L 560 340
+             L 700 420 L 820 350 L 960 430 L 1100 360 L 1240 440
+             L 1380 370 L 1520 430 L 1650 390 L 1650 600 L -50 600 Z"/>
       </g>
 
       <!-- Mid mountains with snow caps -->
       <g filter="url(#paint)">
-        <!-- main range -->
         <path fill="url(#mtnMid)"
-          d="M -50 640
-             L 80 540 L 160 590 L 260 470 L 360 560 L 450 500
-             L 560 590 L 680 460 L 800 580 L 920 490 L 1060 600
-             L 1180 510 L 1300 590 L 1430 500 L 1560 600 L 1650 560
-             L 1650 900 L -50 900 Z"/>
+          d="M -50 540
+             L 80 440 L 160 490 L 260 370 L 360 460 L 450 400
+             L 560 490 L 680 360 L 800 480 L 920 390 L 1060 500
+             L 1180 410 L 1300 490 L 1430 400 L 1560 500 L 1650 460
+             L 1650 660 L -50 660 Z"/>
 
-        <!-- snow caps -->
         <path fill="url(#snow)" opacity="0.95"
-          d="M 240 490 L 260 470 L 285 500 L 275 505 L 268 498 L 258 506 Z"/>
+          d="M 240 390 L 260 370 L 285 400 L 275 405 L 268 398 L 258 406 Z"/>
         <path fill="url(#snow)" opacity="0.95"
-          d="M 660 490 L 680 460 L 710 495 L 695 502 L 686 493 L 676 502 Z"/>
+          d="M 660 390 L 680 360 L 710 395 L 695 402 L 686 393 L 676 402 Z"/>
         <path fill="url(#snow)" opacity="0.95"
-          d="M 1040 620 L 1060 600 L 1085 625 L 1072 632 L 1063 622 L 1053 632 Z"/>
+          d="M 1040 520 L 1060 500 L 1085 525 L 1072 532 L 1063 522 L 1053 532 Z"/>
         <path fill="url(#snow)" opacity="0.95"
-          d="M 1410 520 L 1430 500 L 1458 528 L 1444 535 L 1435 524 L 1425 534 Z"/>
+          d="M 1410 420 L 1430 400 L 1458 428 L 1444 435 L 1435 424 L 1425 434 Z"/>
 
-        <!-- subtle ridge highlights -->
         <path stroke="#a8b8c5" stroke-width="1.2" fill="none" opacity="0.45"
-          d="M 80 540 L 160 590 M 360 560 L 450 500 M 560 590 L 680 460 M 920 490 L 1060 600"/>
+          d="M 80 440 L 160 490 M 360 460 L 450 400 M 560 490 L 680 360 M 920 390 L 1060 500"/>
       </g>
 
       <!-- Near hills -->
       <g filter="url(#paint)">
         <path fill="url(#mtnNear)"
-          d="M -50 720
-             L 100 660 L 230 700 L 360 640 L 500 700 L 640 650
-             L 800 720 L 960 660 L 1120 720 L 1280 670 L 1430 720 L 1560 680 L 1650 710
-             L 1650 900 L -50 900 Z"/>
+          d="M -50 600
+             L 100 540 L 230 580 L 360 520 L 500 580 L 640 530
+             L 800 600 L 960 540 L 1120 600 L 1280 550 L 1430 600 L 1560 560 L 1650 590
+             L 1650 720 L -50 720 Z"/>
       </g>
 
-      <!-- Meadow (back) -->
+      <!-- Mid-distance meadow strip -->
       <g filter="url(#paint-soft)">
         <path fill="url(#meadow)"
-          d="M -50 740
-             L 60 720 L 220 738 L 380 720 L 540 740 L 720 722
-             L 900 742 L 1080 720 L 1260 740 L 1440 722 L 1600 740 L 1650 730
-             L 1650 900 L -50 900 Z"/>
+          d="M -50 640
+             L 60 624 L 220 642 L 380 624 L 540 644 L 720 626
+             L 900 644 L 1080 624 L 1260 644 L 1440 626 L 1600 644 L 1650 634
+             L 1650 720 L -50 720 Z"/>
       </g>
 
-      <!-- Stream / water -->
+      <!-- Stream / water (mid-distance) -->
       <g>
-        <!-- water body -->
         <path fill="url(#water)" filter="url(#paint-soft)"
-          d="M -20 820
-             C 200 800, 400 845, 620 820
-             C 820 798, 1000 850, 1200 825
-             C 1380 805, 1520 845, 1650 822
-             L 1650 880 L -20 880 Z"/>
+          d="M -20 700
+             C 200 686, 400 720, 620 702
+             C 820 686, 1000 724, 1200 706
+             C 1380 692, 1520 722, 1650 706
+             L 1650 740 L -20 740 Z"/>
 
-        <!-- shimmer waves: two layers translating -->
         <g class="water-wave water-shimmer" style="opacity:0.6">
-          <path stroke="#ffffff" stroke-width="1.4" fill="none" opacity="0.7"
-                d="M -100 830 q 20 -4 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
-          <path stroke="#ffffff" stroke-width="1" fill="none" opacity="0.55"
-                d="M -100 850 q 20 -3 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+          <path stroke="#ffffff" stroke-width="1.2" fill="none" opacity="0.7"
+                d="M -100 712 q 20 -3 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
         </g>
-        <g class="water-wave slow" style="opacity:0.45">
-          <path stroke="#ffffff" stroke-width="1.2" fill="none"
-                d="M -100 840 q 20 -5 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
-          <path stroke="#ffffff" stroke-width="0.9" fill="none" opacity="0.6"
-                d="M -100 862 q 20 -3 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
+        <g class="water-wave slow" style="opacity:0.5">
+          <path stroke="#ffffff" stroke-width="0.9" fill="none"
+                d="M -100 728 q 20 -3 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0"/>
         </g>
 
-        <!-- bank reflection -->
         <path fill="#3f5e3a" opacity="0.4" filter="url(#paint-soft)"
-              d="M -20 818 C 200 798, 400 843, 620 818 C 820 796, 1000 848, 1200 823 C 1380 803, 1520 843, 1650 820 L 1650 826 L -20 826 Z"/>
+              d="M -20 698 C 200 684, 400 718, 620 700 C 820 684, 1000 722, 1200 704 C 1380 690, 1520 720, 1650 704 L 1650 710 L -20 710 Z"/>
       </g>
 
-      <!-- Foreground meadow with grass -->
+      <!-- Foreground meadow — deep, rolling -->
       <g filter="url(#paint-soft)">
         <path fill="url(#meadowFront)"
-          d="M -50 855
-             C 200 845, 420 870, 640 858
-             C 820 850, 1020 875, 1240 860
-             C 1420 850, 1560 872, 1650 862
+          d="M -50 740
+             C 160 720, 320 758, 520 736
+             C 720 716, 900 760, 1080 738
+             C 1260 720, 1440 760, 1650 740
              L 1650 900 L -50 900 Z"/>
+
+        <!-- soft shadow band for depth -->
+        <path fill="#3f5a2a" opacity="0.18"
+          d="M -50 770
+             C 200 755, 420 790, 640 770
+             C 820 755, 1020 795, 1240 772
+             C 1420 760, 1560 790, 1650 776
+             L 1650 800 L -50 800 Z"/>
       </g>
 
-      <!-- Grass blades -->
+      <!-- Trees on the hills -->
+      <g filter="url(#paint-soft)">
+        <rect x="1338" y="610" width="4" height="22" fill="#5a3f24"/>
+        <path d="M 1340 580 l -16 28 l 32 0 z M 1340 595 l -20 32 l 40 0 z" fill="#3f5a32"/>
+      </g>
+      <g filter="url(#paint-soft)">
+        <rect x="232" y="618" width="3" height="18" fill="#5a3f24"/>
+        <path d="M 233 595 l -12 22 l 24 0 z M 233 605 l -16 24 l 32 0 z" fill="#3f5a32"/>
+      </g>
+      <g filter="url(#paint-soft)">
+        <rect x="500" y="612" width="3" height="18" fill="#5a3f24"/>
+        <path d="M 501 590 l -10 20 l 20 0 z M 501 600 l -14 22 l 28 0 z" fill="#3f5a32"/>
+      </g>
+
+      <!-- ===== Cows ===== -->
+
+      <!-- Cow A — left, larger, faces left, slowly grazes -->
+      <g class="cow cow-a" transform="translate(520 818)">
+        <g filter="url(#paint-soft)">
+          <!-- shadow -->
+          <ellipse cx="0" cy="44" rx="58" ry="6" fill="#2b2a26" opacity="0.18"/>
+
+          <!-- legs -->
+          <rect x="-30" y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
+          <rect x="-14" y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
+          <rect x="10"  y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
+          <rect x="26"  y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
+
+          <!-- body -->
+          <ellipse cx="0" cy="0" rx="46" ry="22" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2.2"/>
+          <!-- patches -->
+          <path d="M -20 -14 q 8 -6 16 -2 q 6 6 -2 12 q -10 4 -16 -2 q -4 -4 2 -8 z" fill="#2b2a26"/>
+          <path d="M 14 -2 q 10 -4 18 2 q 4 6 -4 12 q -10 2 -16 -2 q -4 -6 2 -12 z" fill="#2b2a26"/>
+          <path d="M -8 6 q 6 -2 10 0 q 2 4 -2 8 q -8 2 -10 -2 q -2 -3 2 -6 z" fill="#2b2a26"/>
+
+          <!-- udder -->
+          <ellipse cx="6" cy="20" rx="6" ry="4" fill="#f0c2b6"/>
+
+          <!-- tail -->
+          <g class="cow-tail" transform="translate(46 -8)">
+            <path d="M 0 0 q 10 6 6 22" stroke="#2b2a26" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <circle cx="6" cy="22" r="3" fill="#2b2a26"/>
+          </g>
+
+          <!-- head (pivots from neck on right of head) -->
+          <g class="cow-head" transform="translate(-58 -4)">
+            <!-- ears -->
+            <path d="M 6 -10 q -4 -10 -10 -6"   stroke="#2b2a26" stroke-width="2" fill="#fdfaf2"/>
+            <path d="M -2 -12 q -3 -8 -10 -4"   stroke="#2b2a26" stroke-width="1.8" fill="#fdfaf2"/>
+            <!-- horn nubs -->
+            <path d="M 0 -10 q 1 -5 5 -6" stroke="#caa97a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <!-- head -->
+            <ellipse cx="0" cy="0" rx="16" ry="13" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2"/>
+            <!-- snout -->
+            <ellipse cx="-10" cy="3" rx="8" ry="6" fill="#f3d2c2" stroke="#2b2a26" stroke-width="1.6"/>
+            <!-- nostrils -->
+            <ellipse cx="-13" cy="2" rx="0.9" ry="1.4" fill="#2b2a26"/>
+            <ellipse cx="-13" cy="6" rx="0.9" ry="1.4" fill="#2b2a26"/>
+            <!-- eye -->
+            <circle cx="-4" cy="-3" r="1.4" fill="#2b2a26"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- Cow B — right, slightly smaller (further), faces right -->
+      <g class="cow cow-b" transform="translate(1080 850) scale(0.86)">
+        <g filter="url(#paint-soft)">
+          <ellipse cx="0" cy="44" rx="58" ry="6" fill="#2b2a26" opacity="0.18"/>
+
+          <rect x="-30" y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
+          <rect x="-14" y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
+          <rect x="10"  y="20" width="7" height="24" rx="2" fill="#2b2a26"/>
+          <rect x="26"  y="18" width="7" height="26" rx="2" fill="#2b2a26"/>
+
+          <ellipse cx="0" cy="0" rx="46" ry="22" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2.2"/>
+          <path d="M -22 0 q 6 -8 16 -4 q 6 6 0 12 q -10 4 -18 -2 q -4 -4 2 -6 z" fill="#2b2a26"/>
+          <path d="M 16 -10 q 8 -4 16 2 q 6 6 -2 12 q -10 4 -16 -2 q -4 -6 2 -12 z" fill="#2b2a26"/>
+          <path d="M -2 8 q 6 -2 10 0 q 2 4 -2 8 q -8 2 -10 -2 q -2 -3 2 -6 z" fill="#2b2a26"/>
+
+          <ellipse cx="-6" cy="20" rx="6" ry="4" fill="#f0c2b6"/>
+
+          <!-- tail on left side -->
+          <g class="cow-tail" transform="translate(-46 -8) scale(-1 1)">
+            <path d="M 0 0 q 10 6 6 22" stroke="#2b2a26" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <circle cx="6" cy="22" r="3" fill="#2b2a26"/>
+          </g>
+
+          <!-- head on right side, mirrored — pivots from neck on left of head -->
+          <g class="cow-head" transform="translate(58 -4) scale(-1 1)">
+            <path d="M 6 -10 q -4 -10 -10 -6"   stroke="#2b2a26" stroke-width="2" fill="#fdfaf2"/>
+            <path d="M -2 -12 q -3 -8 -10 -4"   stroke="#2b2a26" stroke-width="1.8" fill="#fdfaf2"/>
+            <path d="M 0 -10 q 1 -5 5 -6" stroke="#caa97a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="0" cy="0" rx="16" ry="13" fill="#fdfaf2" stroke="#2b2a26" stroke-width="2"/>
+            <ellipse cx="-10" cy="3" rx="8" ry="6" fill="#f3d2c2" stroke="#2b2a26" stroke-width="1.6"/>
+            <ellipse cx="-13" cy="2" rx="0.9" ry="1.4" fill="#2b2a26"/>
+            <ellipse cx="-13" cy="6" rx="0.9" ry="1.4" fill="#2b2a26"/>
+            <circle cx="-4" cy="-3" r="1.4" fill="#2b2a26"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- Grass blades (denser, foreground) -->
       <g stroke="#3d5a2a" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.85">
-        <path class="grass-blade a" d="M 80 880 q -2 -16 4 -28"/>
-        <path class="grass-blade b" d="M 95 880 q 2 -14 -3 -24"/>
-        <path class="grass-blade c" d="M 110 880 q -1 -18 5 -30"/>
-        <path class="grass-blade a" d="M 240 882 q 2 -14 -4 -26"/>
-        <path class="grass-blade b" d="M 255 882 q -2 -16 3 -28"/>
-        <path class="grass-blade c" d="M 380 880 q -1 -14 5 -24"/>
-        <path class="grass-blade a" d="M 395 880 q 3 -16 -3 -28"/>
-        <path class="grass-blade b" d="M 540 884 q -2 -16 4 -28"/>
-        <path class="grass-blade c" d="M 555 884 q 2 -14 -3 -24"/>
-        <path class="grass-blade a" d="M 720 880 q -1 -16 5 -28"/>
-        <path class="grass-blade b" d="M 735 880 q 2 -14 -3 -24"/>
-        <path class="grass-blade c" d="M 900 884 q -2 -18 4 -30"/>
-        <path class="grass-blade a" d="M 915 884 q 2 -14 -3 -24"/>
-        <path class="grass-blade b" d="M 1080 880 q -1 -16 5 -28"/>
-        <path class="grass-blade c" d="M 1095 880 q 2 -14 -3 -24"/>
-        <path class="grass-blade a" d="M 1260 884 q -2 -18 4 -30"/>
-        <path class="grass-blade b" d="M 1275 884 q 2 -14 -3 -24"/>
-        <path class="grass-blade c" d="M 1440 882 q -1 -16 5 -28"/>
-        <path class="grass-blade a" d="M 1455 882 q 2 -14 -3 -24"/>
+        <!-- back row near stream bank -->
+        <path class="grass-blade a" d="M  60 758 q -2 -12 4 -22"/>
+        <path class="grass-blade b" d="M 180 760 q  2 -10 -3 -20"/>
+        <path class="grass-blade c" d="M 300 758 q -2 -14 4 -22"/>
+        <path class="grass-blade a" d="M 430 760 q  2 -12 -3 -22"/>
+        <path class="grass-blade b" d="M 670 758 q -2 -14 4 -22"/>
+        <path class="grass-blade c" d="M 820 760 q  2 -12 -3 -22"/>
+        <path class="grass-blade a" d="M 980 760 q -2 -14 4 -22"/>
+        <path class="grass-blade b" d="M 1180 760 q 2 -12 -3 -22"/>
+        <path class="grass-blade c" d="M 1340 758 q -2 -14 4 -22"/>
+        <path class="grass-blade a" d="M 1500 760 q 2 -12 -3 -22"/>
+
+        <!-- mid row -->
+        <path class="grass-blade a" d="M  100 818 q -2 -16 4 -28"/>
+        <path class="grass-blade b" d="M  240 820 q  2 -14 -3 -24"/>
+        <path class="grass-blade c" d="M  400 822 q -2 -18 4 -30"/>
+        <path class="grass-blade a" d="M  720 820 q  2 -16 -3 -28"/>
+        <path class="grass-blade b" d="M  900 822 q -2 -18 4 -30"/>
+        <path class="grass-blade c" d="M 1240 820 q  2 -14 -3 -24"/>
+        <path class="grass-blade a" d="M 1420 822 q -2 -18 4 -30"/>
+
+        <!-- front row -->
+        <path class="grass-blade a" d="M  40  882 q -2 -22 5 -36"/>
+        <path class="grass-blade b" d="M  160 884 q  3 -20 -4 -34"/>
+        <path class="grass-blade c" d="M  280 882 q -3 -24 5 -38"/>
+        <path class="grass-blade a" d="M  380 884 q  3 -22 -4 -36"/>
+        <path class="grass-blade b" d="M  640 884 q -3 -22 5 -36"/>
+        <path class="grass-blade c" d="M  780 882 q  3 -24 -4 -38"/>
+        <path class="grass-blade a" d="M  860 884 q -3 -20 5 -34"/>
+        <path class="grass-blade b" d="M 1240 884 q -3 -22 5 -36"/>
+        <path class="grass-blade c" d="M 1360 882 q  3 -24 -4 -38"/>
+        <path class="grass-blade a" d="M 1480 884 q -3 -20 5 -34"/>
+        <path class="grass-blade b" d="M 1560 882 q  3 -22 -4 -36"/>
       </g>
 
-      <!-- Tiny wildflowers -->
+      <!-- Wildflowers across the meadow -->
       <g opacity="0.9">
-        <circle cx="180" cy="876" r="2.4" fill="#f6c945"/>
-        <circle cx="320" cy="880" r="2.4" fill="#f1f1f1"/>
-        <circle cx="470" cy="878" r="2.4" fill="#e89bc6"/>
-        <circle cx="660" cy="878" r="2.4" fill="#f6c945"/>
-        <circle cx="850" cy="880" r="2.4" fill="#f1f1f1"/>
-        <circle cx="1020" cy="876" r="2.4" fill="#e89bc6"/>
-        <circle cx="1180" cy="880" r="2.4" fill="#f6c945"/>
-        <circle cx="1360" cy="878" r="2.4" fill="#f1f1f1"/>
-        <circle cx="1520" cy="880" r="2.4" fill="#e89bc6"/>
+        <circle cx="120"  cy="876" r="2.6" fill="#f6c945"/>
+        <circle cx="220"  cy="864" r="2.4" fill="#f1f1f1"/>
+        <circle cx="340"  cy="880" r="2.6" fill="#e89bc6"/>
+        <circle cx="430"  cy="858" r="2.2" fill="#f6c945"/>
+        <circle cx="690"  cy="878" r="2.6" fill="#f1f1f1"/>
+        <circle cx="820"  cy="866" r="2.4" fill="#e89bc6"/>
+        <circle cx="950"  cy="876" r="2.6" fill="#f6c945"/>
+        <circle cx="1240" cy="864" r="2.4" fill="#f1f1f1"/>
+        <circle cx="1360" cy="880" r="2.6" fill="#e89bc6"/>
+        <circle cx="1480" cy="858" r="2.2" fill="#f6c945"/>
+        <circle cx="1560" cy="876" r="2.4" fill="#f1f1f1"/>
       </g>
 
-      <!-- A small pine on the right hill -->
-      <g filter="url(#paint-soft)">
-        <rect x="1338" y="700" width="4" height="22" fill="#5a3f24"/>
-        <path d="M 1340 670 l -16 28 l 32 0 z M 1340 685 l -20 32 l 40 0 z" fill="#3f5a32"/>
-      </g>
-      <g filter="url(#paint-soft)">
-        <rect x="232" y="708" width="3" height="18" fill="#5a3f24"/>
-        <path d="M 233 685 l -12 22 l 24 0 z M 233 695 l -16 24 l 32 0 z" fill="#3f5a32"/>
-      </g>
-
-      <!-- Birds — three flocks, looping across sky -->
+      <!-- Bird flocks -->
       <g class="bird-flock-1">
-        <use href="#bird"   x="0" y="200" width="34" height="17"/>
-        <use href="#bird-b" x="40" y="215" width="26" height="13"/>
-        <use href="#bird-c" x="72" y="208" width="22" height="11"/>
+        <use href="#bird"   x="0"  y="160" width="34" height="17"/>
+        <use href="#bird-b" x="40" y="175" width="26" height="13"/>
+        <use href="#bird-c" x="72" y="168" width="22" height="11"/>
       </g>
 
       <g class="bird-flock-2">
-        <use href="#bird"   x="0"  y="320" width="28" height="14"/>
-        <use href="#bird-b" x="32" y="332" width="22" height="11"/>
+        <use href="#bird"   x="0"  y="280" width="28" height="14"/>
+        <use href="#bird-b" x="32" y="292" width="22" height="11"/>
       </g>
 
       <g class="bird-flock-3">
-        <use href="#bird-c" x="0"  y="150" width="20" height="10"/>
-        <use href="#bird"   x="28" y="160" width="26" height="13"/>
-        <use href="#bird-b" x="60" y="152" width="22" height="11"/>
-        <use href="#bird-c" x="88" y="166" width="18" height="9"/>
+        <use href="#bird-c" x="0"  y="100" width="20" height="10"/>
+        <use href="#bird"   x="28" y="110" width="26" height="13"/>
+        <use href="#bird-b" x="60" y="102" width="22" height="11"/>
+        <use href="#bird-c" x="88" y="116" width="18" height="9"/>
       </g>
 
-      <!-- Subtle paper grain over the whole scene -->
+      <!-- Paper grain over the whole scene -->
       <rect x="0" y="0" width="1600" height="900" filter="url(#grain)" opacity="0.5"/>
     </svg>
   </div>
